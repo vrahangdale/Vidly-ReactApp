@@ -44,7 +44,7 @@ class Movies extends Component {
       return "There is no movies in the database";
     }
     let count = this.state.movies.length;
-    return "There are " + count + " in the Database";
+    return "There are " + count + " movies in the Database";
   };
 
   handleDelete = movie => {
