@@ -1,10 +1,16 @@
 import React, { Component } from "react";
 import { getMovies } from "../services/fakeMovieService";
 import Like from "./common/Like";
+import Pagination from "./common/Pagination";
+import { paginate } from "../utils/Paginate";
 
 class Movies extends Component {
-  state = { movies: getMovies() };
+  state = { movies: getMovies(), pageSize: 4, currentPage: 1 };
   render() {
+    const { length: count } = this.state.movies;
+
+    const { pageSize, currentPage, movies: allMovies } = this.state;
+    const movies = paginate(allMovies, currentPage, pageSize);
     return (
       <div>
         <div className="badge">{this.movieCount()}</div>
@@ -20,7 +26,7 @@ class Movies extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.movies.map(movie => (
+            {movies.map(movie => (
               <tr key={movie._id}>
                 <td>{movie.title}</td>
                 <td>{movie.genre.name}</td>
@@ -44,6 +50,12 @@ class Movies extends Component {
             ))}
           </tbody>
         </table>
+        <Pagination
+          items={count}
+          pageSize={pageSize}
+          onPageChange={this.handlePageChange}
+          currentPage={currentPage}
+        />
       </div>
     );
   }
@@ -65,6 +77,9 @@ class Movies extends Component {
     movies[index] = { ...movies[index] };
     movies[index].liked = !movies[index].liked;
     this.setState({ movies });
+  };
+  handlePageChange = page => {
+    this.setState({ currentPage: page });
   };
 }
 
