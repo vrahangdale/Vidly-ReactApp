@@ -6,6 +6,8 @@ import Rental from "./components/Rental";
 import MovieForm from "./components/MovieForm";
 import NotFound from "./components/common/NotFound";
 import LoginForm from "./components/loginForm";
+import RegisterForm from "./components/registerForm";
+import NewMovieForm from "./components/newMovieForm";
 import { Route, Switch, Redirect } from "react-router-dom";
 import "./App.css";
 
@@ -16,6 +18,8 @@ function App() {
       <main className="container">
         <Switch>
           <Route path="/login" component={LoginForm} />
+          <Route path="/register" component={RegisterForm} />
+          {/* <Route path="/movie/new" component={NewMovieForm} /> */}
           <Route path="/movie/:id" component={MovieForm} />
           <Route path="/customer" component={Customer} />
           <Route path="/rental" component={Rental} />
