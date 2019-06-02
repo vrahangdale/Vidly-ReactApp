@@ -1,13 +1,16 @@
 import React, { Component } from "react";
-import { getMovies } from "../services/fakeMovieService";
+import { getMovies, deleteMovie } from "../services/movieService";
 import _ from "lodash";
 import Pagination from "./common/Pagination";
 import { paginate } from "../utils/Paginate";
 import ListGroup from "./common/listGroup";
 import MoviesTable from "./moviesTable";
-import { getGenres } from "../services/fakeGenreService";
+import { getGenres } from "../services/genreService";
 import { Link } from "react-router-dom";
 import SearchBox from "./searchBox";
+import { toast } from "react-toastify";
+// import http from "../services/httpService";
+// import config from "../config.json";
 
 class Movies extends Component {
   state = {
@@ -19,9 +22,13 @@ class Movies extends Component {
     selectedGenre: null,
     sortColumn: { path: "title", order: "asc" }
   };
-  componentDidMount() {
-    const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
-    this.setState({ movies: getMovies(), genres });
+  async componentDidMount() {
+    //const { data: allGenres } = await http.get(config.apiEndpoint + "/genres");
+    const { data: allGenres } = await getGenres();
+
+    const genres = [{ _id: "", name: "All Genres" }, ...allGenres];
+    const { data: movies } = await getMovies();
+    this.setState({ movies, genres });
   }
 
   movieCount = filteredMovies => {
@@ -32,9 +39,19 @@ class Movies extends Component {
     return "Showing " + count + " movies";
   };
 
-  handleDelete = movie => {
-    const movies = this.state.movies.filter(m => m._id !== movie._id);
+  handleDelete = async movie => {
+    const originalMovies = this.state.movies;
+    const movies = originalMovies.filter(m => m._id !== movie._id);
     this.setState({ movies });
+
+    try {
+      await deleteMovie(movie._id);
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404) console.log("x");
+      toast.error("This movie has already been deleted.");
+
+      this.setState({ movies: originalMovies });
+    }
   };
   handleLike = movie => {
     const movies = [...this.state.movies];
