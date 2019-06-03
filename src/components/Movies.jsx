@@ -47,10 +47,19 @@ class Movies extends Component {
     try {
       await deleteMovie(movie._id);
     } catch (ex) {
-      if (ex.response && ex.response.status === 404) console.log("x");
-      toast.error("This movie has already been deleted.");
+      if (ex.response && ex.response.status === 403) {
+        console.log("x");
+        toast.error(
+          "You don't have permission to delete the movie. Contact Admin"
+        );
+        this.setState({ movies: originalMovies });
+      }
+      if (ex.response && ex.response.status === 404) {
+        console.log("x");
+        toast.error("This movie has already been deleted.");
 
-      this.setState({ movies: originalMovies });
+        this.setState({ movies: originalMovies });
+      }
     }
   };
   handleLike = movie => {
@@ -116,6 +125,7 @@ class Movies extends Component {
 
   render() {
     const genres = this.state.genres;
+    const { user } = this.props;
 
     const { pageSize, currentPage, sortColumn, searchQuery } = this.state;
     const { count, data: movies } = this.getPagedData();
@@ -130,15 +140,17 @@ class Movies extends Component {
             />
           </div>
           <div className="col-9">
-            <div className="row">
-              <Link
-                //onClick={<Link to="/movie/new" />}
-                to="/movie/new"
-                className="btn btn-primary m-2"
-              >
-                New Movie
-              </Link>
-            </div>
+            {user && user.isAdmin && (
+              <div className="row">
+                <Link
+                  //onClick={<Link to="/movie/new" />}
+                  to="/movie/new"
+                  className="btn btn-primary m-2"
+                >
+                  New Movie
+                </Link>
+              </div>
+            )}
 
             <div className="badge">{this.movieCount(count)}</div>
             <SearchBox value={searchQuery} onChange={this.handleSearch} />
