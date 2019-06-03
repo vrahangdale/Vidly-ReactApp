@@ -2,11 +2,11 @@ import http from "./httpService";
 import { apiEndpoint } from "../config.json";
 
 function movieUrl(id) {
-  return `${apiEndpoint}/movies/${id}`;
+  return `/movies/${id}`;
 }
 
 export function getMovies() {
-  return http.get(apiEndpoint + "/movies");
+  return http.get("/movies");
 }
 export function deleteMovie(movieId) {
   return http.delete(movieUrl(movieId));
@@ -15,7 +15,7 @@ export function deleteMovie(movieId) {
 
 export function getMovie(id) {
   //http.get(apiEndpoint + `/movies/${id}`);
-  return http.get(apiEndpoint + `/movies/${id}`);
+  return http.get(`/movies/${id}`);
 }
 
 export function saveMovie(movie) {
@@ -37,5 +37,5 @@ export function saveMovie(movie) {
     return http.put(movieUrl(movie._id), body);
   }
 
-  return http.post(apiEndpoint + "/movies", movie);
+  return http.post("/movies", movie);
 }
